@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 import ChatInput from '../components/ChatInput';
-import ResponseCard from '../components/ResponseCard';
+import MessageBubble from '../components/MessageBubble';
 import ThinkingIndicator from '../components/ThinkingIndicator';
 import PromptChips from '../components/PromptChips';
 import { useAppContext } from '../context/AppContext';
@@ -23,59 +23,81 @@ export default function ChatPage() {
 
   useEffect(() => {
     const q = searchParams.get('q');
+    const intent = searchParams.get('intent');
     if (q && !processed.current) {
       processed.current = true;
       setSearchParams({}, { replace: true });
-      handleSend(q);
+      handleSend(q, intent);
     }
   }, [searchParams]);
 
   useEffect(() => { scroll(); }, [state.chatHistory, isLoading, scroll]);
 
-  const handleSend = async (text) => {
+  const handleSend = async (text, intent = null) => {
     if (!text.trim() || isLoading) return;
-    addMessage({ id: generateId(), type: 'user', text: text.trim(), timestamp: new Date().toISOString() });
+    
+    addMessage({ 
+      id: generateId(), 
+      type: 'user', 
+      text: text.trim(), 
+      timestamp: new Date().toISOString() 
+    });
+    
     setIsLoading(true);
-    await new Promise(r => setTimeout(r, 1500 + Math.random() * 1500));
-    const response = getResponse(text);
-    addMessage({ id: generateId(), type: 'ai', response, question: text.trim(), timestamp: new Date().toISOString() });
+    
+    // Simulate network delay
+    await new Promise(r => setTimeout(r, 1500 + Math.random() * 1000));
+    
+    const response = getResponse(text, intent);
+    
+    addMessage({ 
+      id: generateId(), 
+      type: 'ai', 
+      response, 
+      question: text.trim(), 
+      timestamp: new Date().toISOString() 
+    });
+    
     setIsLoading(false);
   };
 
   const empty = state.chatHistory.length === 0;
 
   return (
-    <div className="relative min-h-screen flex flex-col pt-16 pb-4">
+    <div className="relative h-full flex flex-col">
       {/* Header */}
-      <div className="px-4 py-3 flex items-center justify-between max-w-xl mx-auto w-full">
-        <h1 className="font-cinzel text-base text-gold-500/80 tracking-wider">Ask Krishna</h1>
+      <div className="px-4 md:px-8 py-4 flex items-center justify-between border-b border-white/[0.02]">
+        <h1 className="font-sans text-sm text-gray-400 font-medium tracking-wide">Workspace</h1>
         {!empty && (
           <button
             onClick={() => dispatch({ type: 'CLEAR_CHAT' })}
-            className="text-gray-700 hover:text-gray-400 transition-colors"
-            aria-label="Clear chat"
+            className="text-gray-600 hover:text-red-400/80 transition-colors flex items-center gap-2 text-xs"
+            aria-label="Clear workspace"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Clear History</span>
           </button>
         )}
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 pb-28">
-        <div className="max-w-xl mx-auto space-y-8">
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto px-4 md:px-8 pb-32 pt-8">
+        <div className="max-w-2xl mx-auto space-y-8">
           {empty && !isLoading && (
             <motion.div
-              className="text-center pt-24"
+              className="flex flex-col items-center justify-center h-full pt-12 md:pt-24"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              <p className="text-gray-600 text-sm font-light mb-8">What troubles your heart?</p>
-              <PromptChips onSelect={handleSend} />
+              <p className="text-gray-500 text-[15px] font-light mb-8 text-center max-w-sm">
+                How can I assist your spiritual reflection today?
+              </p>
+              <PromptChips onSelect={(text) => handleSend(text)} />
             </motion.div>
           )}
 
           <AnimatePresence mode="popLayout">
-            {state.chatHistory.map((msg) => (
+            {state.chatHistory.map((msg, index) => (
               <motion.div
                 key={msg.id}
                 layout
@@ -83,38 +105,41 @@ export default function ChatPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
               >
-                {msg.type === 'user' ? (
-                  <div className="flex justify-end mb-2">
-                    <div className="max-w-sm rounded-2xl rounded-tr-md px-4 py-3" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                      <p className="text-gray-200 text-sm">{msg.text}</p>
-                    </div>
-                  </div>
-                ) : (
-                  <ResponseCard
-                    response={msg.response}
-                    question={msg.question}
-                    animate={msg.id === state.chatHistory[state.chatHistory.length - 1]?.id}
-                  />
-                )}
+                <MessageBubble 
+                  message={msg} 
+                  isLatest={index === state.chatHistory.length - 1} 
+                />
               </motion.div>
             ))}
           </AnimatePresence>
 
           <AnimatePresence>
-            {isLoading && <ThinkingIndicator />}
+            {isLoading && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className="flex gap-4">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gold-500/10 border border-gold-500/20 text-gold-400">
+                    <ThinkingIndicator />
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </AnimatePresence>
 
-          <div ref={bottomRef} />
+          <div ref={bottomRef} className="h-4" />
         </div>
       </div>
 
-      {/* Fixed input */}
-      <div
-        className="fixed bottom-0 left-0 right-0 z-30 px-4 py-4"
-        style={{ background: 'linear-gradient(to top, #000 70%, transparent)' }}
-      >
-        <div className="max-w-xl mx-auto">
-          <ChatInput onSubmit={handleSend} disabled={isLoading} />
+      {/* Input Area */}
+      <div className="absolute bottom-0 left-0 right-0 px-4 md:px-8 py-6 bg-gradient-to-t from-surface via-surface to-transparent">
+        <div className="max-w-2xl mx-auto relative">
+          <ChatInput onSubmit={(text) => handleSend(text)} disabled={isLoading} />
+          <p className="text-center mt-3 text-[10px] text-gray-600 font-light hidden md:block">
+            AI can make mistakes. Consider consulting verified texts or mentors for profound matters.
+          </p>
         </div>
       </div>
     </div>

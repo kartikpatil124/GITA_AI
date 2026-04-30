@@ -7,6 +7,7 @@ const STORAGE_KEY = 'gita-ai-state';
 const initialState = {
   chatHistory: [],
   savedAnswers: [],
+  activeVerse: null,
   settings: {
     theme: 'dark',
     language: 'en',
@@ -21,7 +22,7 @@ function loadState() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
-      return { ...initialState, ...parsed, splashCompleted: false };
+      return { ...initialState, ...parsed, splashCompleted: false, activeVerse: null };
     }
   } catch (e) {
     console.warn('Failed to load state from localStorage:', e);
@@ -48,12 +49,21 @@ function appReducer(state, action) {
       return {
         ...state,
         chatHistory: [...state.chatHistory, action.payload],
+        // Automatically set active verse if AI responds with one
+        activeVerse: action.payload.type === 'ai' && action.payload.response.verse ? action.payload.response.verse : state.activeVerse
       };
     
     case 'CLEAR_CHAT':
       return {
         ...state,
         chatHistory: [],
+        activeVerse: null,
+      };
+
+    case 'SET_ACTIVE_VERSE':
+      return {
+        ...state,
+        activeVerse: action.payload
       };
 
     case 'SAVE_ANSWER': {
@@ -102,6 +112,7 @@ export function AppProvider({ children }) {
     // Convenience methods
     addMessage: (message) => dispatch({ type: 'ADD_MESSAGE', payload: message }),
     clearChat: () => dispatch({ type: 'CLEAR_CHAT' }),
+    setActiveVerse: (verse) => dispatch({ type: 'SET_ACTIVE_VERSE', payload: verse }),
     saveAnswer: (answer) => dispatch({ type: 'SAVE_ANSWER', payload: answer }),
     removeSavedAnswer: (id) => dispatch({ type: 'REMOVE_SAVED_ANSWER', payload: id }),
     updateSettings: (settings) => dispatch({ type: 'UPDATE_SETTINGS', payload: settings }),

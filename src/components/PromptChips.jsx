@@ -1,16 +1,16 @@
 import { motion } from 'framer-motion';
 
 const chips = [
-  "I feel lost",
-  "How to stay calm?",
-  "What should I do in life?",
-  "I lack motivation",
+  "What should I do in confusion?",
+  "How do I control anger?",
+  "How do I stay focused?",
+  "What is karma?",
 ];
 
 export default function PromptChips({ onSelect }) {
   return (
     <motion.div
-      className="flex flex-wrap justify-center gap-2 max-w-xl mx-auto mt-5"
+      className="flex flex-wrap justify-center gap-2 max-w-xl mx-auto mt-2"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5, delay: 0.3 }}

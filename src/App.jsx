@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { AppProvider } from './context/AppContext';
 import SplashScreen from './components/SplashScreen';
-import MainLayout from './layouts/MainLayout';
+import WorkspaceLayout from './layouts/WorkspaceLayout';
 import HomePage from './pages/HomePage';
 import ChatPage from './pages/ChatPage';
 import SavedPage from './pages/SavedPage';
@@ -28,7 +28,8 @@ export default function App() {
 
         {splashDone && (
           <Routes>
-            <Route element={<MainLayout />}>
+            {/* The new dual-pane layout applies everywhere, but responds to the path */}
+            <Route element={<WorkspaceLayout />}>
               <Route path="/" element={<HomePage />} />
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/saved" element={<SavedPage />} />
