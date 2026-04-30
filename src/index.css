@@ -2,17 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===== Global Styles ===== */
 :root {
   --gold: #D4A843;
   --gold-light: #F5D77A;
-  --saffron: #FF9933;
-  --cosmic: #1A1145;
-  --divine: #FFD700;
-  --bg-primary: #080B1A;
-  --bg-secondary: #0F1535;
-  --glass-bg: rgba(15, 21, 53, 0.6);
-  --glass-border: rgba(212, 168, 67, 0.15);
 }
 
 * {
@@ -27,160 +19,51 @@ html {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: var(--bg-primary);
-  color: #E8E0F5;
+  background-color: #000000;
+  color: #e0e0e0;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ===== Custom Scrollbar ===== */
-::-webkit-scrollbar {
-  width: 6px;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: rgba(212, 168, 67, 0.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(212, 168, 67, 0.35); }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(212, 168, 67, 0.3);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 168, 67, 0.5);
-}
-
-/* ===== Selection Color ===== */
 ::selection {
-  background: rgba(255, 215, 0, 0.3);
-  color: #FFD700;
+  background: rgba(212, 168, 67, 0.2);
+  color: #F5D77A;
 }
 
-/* ===== Glassmorphism Utility ===== */
 @layer components {
-  .glass {
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-  }
-
-  .glass-light {
-    background: rgba(15, 21, 53, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(212, 168, 67, 0.1);
-    border-radius: 12px;
-  }
-
-  .glass-heavy {
-    background: rgba(15, 21, 53, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(212, 168, 67, 0.2);
-    border-radius: 16px;
-  }
-
   .text-gold-gradient {
-    background: linear-gradient(135deg, #D4A843 0%, #F5D77A 40%, #FFD700 60%, #D4A843 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .text-divine-gradient {
-    background: linear-gradient(135deg, #FFD700 0%, #FF9933 50%, #FFD700 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .border-gold-glow {
-    border: 1px solid rgba(212, 168, 67, 0.3);
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.1), inset 0 0 15px rgba(255, 215, 0, 0.05);
-  }
-
-  .btn-divine {
-    @apply px-6 py-3 rounded-xl font-semibold text-primary-400 
-           transition-all duration-300 ease-out
-           hover:shadow-divine-lg hover:scale-105 active:scale-95;
     background: linear-gradient(135deg, #D4A843 0%, #F5D77A 50%, #D4A843 100%);
-    background-size: 200% 200%;
-    animation: shimmer 3s ease-in-out infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  .btn-glass {
-    @apply px-5 py-2.5 rounded-xl font-medium transition-all duration-300 ease-out
-           hover:scale-105 active:scale-95;
-    background: rgba(15, 21, 53, 0.6);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(212, 168, 67, 0.2);
-    color: #F5D77A;
-  }
-
-  .btn-glass:hover {
-    border-color: rgba(212, 168, 67, 0.4);
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
-  }
-
-  .divine-glow {
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.15), 0 0 60px rgba(255, 215, 0, 0.08);
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
   }
 
   .shloka-text {
     font-family: 'Cinzel', Georgia, serif;
     color: #F5D77A;
     line-height: 1.8;
-    letter-spacing: 0.02em;
   }
 }
 
-/* ===== Keyframes ===== */
-@keyframes shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-@keyframes float-particle {
-  0%, 100% {
-    transform: translateY(0) translateX(0);
-    opacity: 0;
-  }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% {
-    transform: translateY(-100vh) translateX(20px);
-    opacity: 0;
-  }
-}
-
-@keyframes cosmic-pulse {
-  0%, 100% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(1.05);
-  }
-}
-
-/* ===== Focus States ===== */
+/* Focus */
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #D4A843;
+  outline: 2px solid rgba(212, 168, 67, 0.5);
   outline-offset: 2px;
   border-radius: 8px;
-}
-
-/* ===== Responsive Typography ===== */
-@media (max-width: 640px) {
-  html {
-    font-size: 14px;
-  }
 }

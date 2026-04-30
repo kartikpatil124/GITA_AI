@@ -1,23 +1,22 @@
 import { useState, useEffect, useRef } from 'react';
 
-export default function TypingEffect({ text, speed = 20, onComplete, className = '' }) {
+export default function TypingEffect({ text, speed = 18, onComplete, className = '' }) {
   const [displayed, setDisplayed] = useState('');
-  const [isComplete, setIsComplete] = useState(false);
-  const indexRef = useRef(0);
+  const [done, setDone] = useState(false);
+  const idx = useRef(0);
 
   useEffect(() => {
     if (!text) return;
-    
     setDisplayed('');
-    indexRef.current = 0;
-    setIsComplete(false);
+    idx.current = 0;
+    setDone(false);
 
     const interval = setInterval(() => {
-      if (indexRef.current < text.length) {
-        setDisplayed(text.substring(0, indexRef.current + 1));
-        indexRef.current += 1;
+      if (idx.current < text.length) {
+        setDisplayed(text.substring(0, idx.current + 1));
+        idx.current++;
       } else {
-        setIsComplete(true);
+        setDone(true);
         clearInterval(interval);
         onComplete?.();
       }
@@ -29,9 +28,7 @@ export default function TypingEffect({ text, speed = 20, onComplete, className =
   return (
     <span className={className}>
       {displayed}
-      {!isComplete && (
-        <span className="inline-block w-0.5 h-5 bg-gold-400 ml-0.5 align-middle animate-pulse" />
-      )}
+      {!done && <span className="inline-block w-px h-4 bg-gold-500/60 ml-0.5 align-middle animate-pulse" />}
     </span>
   );
 }
